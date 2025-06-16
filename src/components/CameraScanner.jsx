@@ -8,7 +8,7 @@ export default function CameraScanner({ onCapture, onCancel }) {
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: "environment" } } // cámara trasera
+          video: { facingMode: { exact: "environment" } }
         });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -20,7 +20,6 @@ export default function CameraScanner({ onCapture, onCancel }) {
 
     startCamera();
 
-    // Detener la cámara cuando se desmonta
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
         videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
@@ -43,35 +42,38 @@ export default function CameraScanner({ onCapture, onCancel }) {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="relative w-full max-w-md aspect-video bg-black rounded overflow-hidden">
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          className="w-full h-full object-cover rounded"
-        />
-        <p className="absolute inset-x-0 bottom-2 text-center text-sm bg-black bg-opacity-50 text-white py-1 rounded">
-          Centra el documento aquí
-        </p>
-      </div>
+    <div className="relative w-full h-screen overflow-hidden bg-black">
+      {/* VIDEO A PANTALLA COMPLETA */}
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+      />
 
+      {/* CANVAS OCULTO */}
       <canvas ref={canvasRef} className="hidden" />
 
-      <div className="flex gap-4 mt-4">
-        <button
-          onClick={onCancel}
-          className="bg-white border border-gray-400 text-gray-700 px-4 py-2 rounded hover:bg-gray-100"
-        >
-          Cancelar
-        </button>
-        <button
-          onClick={handleCapture}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Capturar
-        </button>
+      {/* BOTÓN CANCELAR */}
+      <button
+        onClick={onCancel}
+        className="absolute top-4 left-4 bg-white text-black px-4 py-2 rounded z-10 shadow"
+      >
+        Cancelar
+      </button>
+
+      {/* INDICADOR CENTRAR */}
+      <div className="absolute bottom-24 w-full text-center text-white text-sm z-10">
+        Centra el documento aquí
       </div>
+
+      {/* BOTÓN CAPTURAR */}
+      <button
+        onClick={handleCapture}
+        className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-6 py-3 rounded-full z-10 shadow-lg"
+      >
+        Capturar
+      </button>
     </div>
   );
 }
